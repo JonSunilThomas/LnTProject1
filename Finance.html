@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance News</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+            background-image: radial-gradient(at top, #A7F3D0, #f3f4f6); /* Green gradient for Finance theme */
+        }
+        .news-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            transition: box-shadow 0.3s ease;
+            min-height: 300px;
+        }
+        .news-card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .news-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .news-card:hover img {
+            transform: scale(1.05);
+        }
+        .news-card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0));
+            color: white;
+            transition: transform 0.3s ease;
+        }
+        .news-card:hover .news-card-content {
+            transform: translateY(-10px);
+        }
+        .news-card-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem; 
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        .category-tag {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            z-index: 10;
+            background-color: #2ECC71; /* Green for Finance */
+        }
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-body img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+        }
+        .modal-text-content {
+            padding: 1.5rem;
+            overflow-y: auto; /* Allow scrolling for long text */
+        }
+        .modal-text-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <a href="Index.html" class="text-2xl font-bold text-gray-800" style="font-family: 'Playfair Display', serif;">The Daily Lens</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="Index.html" class="text-gray-600 hover:text-green-500">Home</a>
+                    <a href="sports.html" class="text-gray-600 hover:text-green-500">Sports</a>
+                    <a href="Finance.html" class="text-green-500 font-bold">Finance</a>
+                    <a href="Contact.html" class="text-gray-600 hover:text-green-500">Contact</a>
+                    <a href="About_Us.html" class="text-gray-600 hover:text-green-500">About Us</a>
+                </div>
+                <div class="md:hidden">
+                    <button class="text-gray-600 hover:text-blue-500 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-4xl font-bold text-gray-800" style="font-family: 'Playfair Display', serif;">Finance</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 auto-rows-[350px] gap-6">
+            <a href="#" class="news-card md:col-span-1 md:row-span-1" data-title="Mortgage Rates Show Slight Fluctuations" data-img="mortgage.jpg" data-desc="National mortgage rates showed mixed movement this week as the market reacts to new economic data. While 30-year fixed rates saw a slight dip, 15-year rates ticked up marginally. Experts advise potential homebuyers to shop around for the best rates as volatility is expected to continue in the short term.">
+                <div class="category-tag">Markets</div>
+                <img src="mortgage.jpg" alt="Mortgage Rates">
+                <div class="news-card-content">
+                    <h3>Mortgage Rates Show Slight Fluctuations</h3>
+                </div>
+            </a>
+            <a href="#" class="news-card md:col-span-2 md:row-span-2" data-title="Cryptocurrency Market Cap Reaches $3.94 Trillion" data-img="bitcoin.jpeg" data-desc="The global cryptocurrency market cap has reached a staggering $3.94 trillion, with major coins like Bitcoin and Ethereum seeing significant gains over the past quarter. This surge is largely driven by increased institutional investment and wider adoption of digital currencies in mainstream finance. However, regulators are watching closely, and the long-term stability of the market remains a topic of intense debate among financial analysts.">
+                <div class="category-tag">Markets</div>
+                <img src="bitcoin.jpeg" alt="Crypto">
+                <div class="news-card-content">
+                    <h3 style="font-size: 2.5rem;">Cryptocurrency Market Cap Reaches $3.94 Trillion</h3>
+                    <p>The global cryptocurrency market cap stands at a staggering $3.94 trillion, with major coins seeing significant gains.</p>
+                </div>
+            </a>
+            <a href="#" class="news-card md:col-span-1 md:row-span-1" data-title="Top Firms' Market Cap Erodes by ₹1.36 Trillion" data-img="marketcap.jpg" data-desc="The market capitalization of six of India's top-valued companies, including major players in the tech and energy sectors, declined significantly by a combined ₹1.36 trillion this past week. The dip is attributed to a combination of global economic headwinds and sector-specific challenges. Investors are cautiously optimistic, looking for signs of recovery in the next quarter.">
+                <div class="category-tag">Corporate</div>
+                <img src="marketcap.jpg" alt="Market Cap">
+                <div class="news-card-content">
+                    <h3>Top Firms' Market Cap Erodes by ₹1.36 Trillion</h3>
+                </div>
+            </a>
+             <a href="#" class="news-card md:col-span-3 md:row-span-1" data-title="AU Small Finance Bank Receives RBI Approval" data-img="marketcap.jpg" data-desc="AU Small Finance Bank, led by Sanjay Agarwal, has received the final approval from the Reserve Bank of India (RBI) to transition into a universal bank. This move will allow the bank to offer a wider range of financial products and services, putting it in direct competition with larger established banks. The transition is expected to be completed over the next 18-24 months.">
+                <div class="category-tag">Banking</div>
+                <img src="marketcap.jpg" alt="Banking">
+                <div class="news-card-content">
+                    <h3>AU Small Finance Bank Receives RBI Approval to Become Universal Bank</h3>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-8 py-4">
+        <div class="container mx-auto px-6 text-center text-gray-600">
+            &copy; 2025 The Daily Lens. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- News Preview Modal -->
+    <div id="news-modal" class="modal">
+        <div class="modal-content">
+            <button id="close-modal-button" class="close-button">&times;</button>
+            <div class="modal-body">
+                <img id="modal-img" src="" alt="News Image">
+            </div>
+            <div class="modal-text-content">
+                <h2 id="modal-title"></h2>
+                <p id="modal-desc" class="text-gray-700 leading-relaxed"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const newsCards = document.querySelectorAll('.news-card');
+            const modal = document.getElementById('news-modal');
+            const modalImg = document.getElementById('modal-img');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDesc = document.getElementById('modal-desc');
+            const closeModalButton = document.querySelector('.close-button');
+
+            newsCards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    const title = card.dataset.title;
+                    const img = card.querySelector('img').src;
+                    const desc = card.dataset.desc;
+
+                    modalTitle.textContent = title;
+                    modalImg.src = img;
+                    modalDesc.textContent = desc;
+
+                    modal.classList.add('active');
+                });
+            });
+
+            const closeModal = () => {
+                modal.classList.remove('active');
+            };
+
+            closeModalButton.addEventListener('click', closeModal);
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

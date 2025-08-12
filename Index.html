@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Daily Lens</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for the abstract layout */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+            background-image: radial-gradient(at top, #DBEAFE, #f3f4f6); /* Blue gradient for Home theme */
+        }
+        .news-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            transition: box-shadow 0.3s ease;
+            min-height: 300px; 
+        }
+        .news-card:hover {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .news-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .news-card:hover img {
+            transform: scale(1.05);
+        }
+        .news-card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0));
+            color: white;
+            transition: transform 0.3s ease;
+        }
+        .news-card:hover .news-card-content {
+            transform: translateY(-10px);
+        }
+        .news-card-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem; 
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        .news-card-content p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+        .category-tag {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+        .tag-politics { background-color: #E74C3C; }
+        .tag-sports { background-color: #F9A826; }
+        .tag-finance { background-color: #2ECC71; }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-body img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+        }
+        .modal-text-content {
+            padding: 1.5rem;
+            overflow-y: auto; /* Allow scrolling for long text */
+        }
+        .modal-text-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <a href="Index.html" class="text-2xl font-bold text-gray-800" style="font-family: 'Playfair Display', serif;">The Daily Lens</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="Index.html" class="text-blue-500 font-bold">Home</a>
+                    <a href="sports.html" class="text-gray-600 hover:text-blue-500">Sports</a>
+                    <a href="Finance.html" class="text-gray-600 hover:text-blue-500">Finance</a>
+                    <a href="Contact.html" class="text-gray-600 hover:text-blue-500">Contact</a>
+                    <a href="About_Us.html" class="text-gray-600 hover:text-blue-500">About Us</a>    
+                </div>
+                <div class="md:hidden">
+                    <button class="text-gray-600 hover:text-blue-500 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                            <path d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-6">Top Stories</h2>
+        
+        <!-- Abstract Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-4 auto-rows-[300px] gap-6">
+            <a href="#" class="news-card md:col-span-2 md:row-span-2" data-title="PM Modi Flags-Off Bengaluru Metro Yellow Line" data-img="metro.jpg" data-desc="In a major boost to urban infrastructure, Prime Minister Narendra Modi inaugurated the much-awaited Yellow Line of the Namma Metro in Bengaluru. The new line is expected to significantly ease traffic congestion in the city's tech corridor. During the event, the PM also flagged off new Vande Bharat trains, reinforcing the government's commitment to modernizing India's railway network.">
+                <div class="category-tag tag-politics">Politics</div>
+                <img src="metro.jpg" alt="Metro">
+                <div class="news-card-content">
+                    <h3>PM Modi Flags-Off Bengaluru Metro Yellow Line</h3>
+                    <p>PM Modi inaugurates the Yellow Line and flags off new Vande Bharat trains.</p>
+                </div>
+            </a>
+
+            <a href="#" class="news-card md:col-span-2 md:row-span-1" data-title="Crypto Market Cap Hits New High of $3.94 Trillion" data-img="Crypto.jpg" data-desc="The global cryptocurrency market cap has reached a staggering $3.94 trillion, with major coins like Bitcoin and Ethereum seeing significant gains over the past quarter. This surge is largely driven by increased institutional investment and wider adoption of digital currencies in mainstream finance. However, regulators are watching closely, and the long-term stability of the market remains a topic of intense debate among financial analysts.">
+                <div class="category-tag tag-finance">Finance</div>
+                <img src="Crypto.jpg" alt="Crypto">
+                <div class="news-card-content">
+                    <h3>Crypto Market Cap Hits New High of $3.94 Trillion</h3>
+                </div>
+            </a>
+            
+            <a href="#" class="news-card md:col-span-1 md:row-span-2" data-title="Man United's Landmark Signing Shakes Up Premier League" data-img="ManUnited1.jpg" data-desc="Manchester United has officially announced a landmark signing that is set to send shockwaves through the Premier League. The record-breaking deal brings one of the world's most sought-after talents to Old Trafford. We analyze the tactical implications, the financial details, and the fan reaction to this blockbuster transfer.">
+                <div class="category-tag tag-sports">Sports</div>
+                <img src="ManUnited1.jpg" alt="Football">
+                <div class="news-card-content">
+                    <h3 style="font-size: 1.6875rem; line-height: 1.2;">Man United's Landmark Signing Shakes Up Premier League</h3>
+                </div>
+            </a>
+            
+            <a href="#" class="news-card md:col-span-1 md:row-span-1" data-title="India vs England Test Series Recap" data-img="cricket.jpg" data-desc="The five-match test series between India and England was a rollercoaster of emotions, with both teams showcasing exceptional talent and resilience. From stunning centuries to game-changing bowling spells, the series had it all. We break down the key moments and standout performances.">
+                <div class="category-tag tag-sports">Sports</div>
+                <img src="cricket.jpg" alt="Cricket">
+                <div class="news-card-content">
+                    <h3>India vs England Test Series Recap</h3>
+                </div>
+            </a>
+
+            <a href="#" class="news-card md:col-span-2 md:row-span-1" data-title="Operation Sindoor: A High-Stakes Strategic Mission" data-img="OPSindoor.jpg" data-desc="Details have emerged about 'Operation Sindoor,' a high-stakes strategic mission with significant international implications. The covert operation, which involved multiple agencies, has been hailed as a major success in intelligence circles. While official comments are limited, sources indicate the mission was critical for national security.">
+                <div class="category-tag tag-politics">Politics</div>
+                <img src="OPSindoor.jpg" alt="Strategy">
+                <div class="news-card-content">
+                    <h3>Operation Sindoor: A High-Stakes Strategic Mission</h3>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-8 py-4">
+        <div class="container mx-auto px-6 text-center text-gray-600">
+            &copy; 2025 The Daily Lens. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- News Preview Modal -->
+    <div id="news-modal" class="modal">
+        <div class="modal-content">
+            <button id="close-modal-button" class="close-button">&times;</button>
+            <div class="modal-body">
+                <img id="modal-img" src="" alt="News Image">
+            </div>
+            <div class="modal-text-content">
+                <h2 id="modal-title"></h2>
+                <p id="modal-desc" class="text-gray-700 leading-relaxed"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const newsCards = document.querySelectorAll('.news-card');
+            const modal = document.getElementById('news-modal');
+            const modalImg = document.getElementById('modal-img');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDesc = document.getElementById('modal-desc');
+            const closeModalButton = document.querySelector('.close-button');
+
+            newsCards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    const title = card.dataset.title;
+                    const img = card.querySelector('img').src;
+                    const desc = card.dataset.desc;
+
+                    modalTitle.textContent = title;
+                    modalImg.src = img;
+                    modalDesc.textContent = desc;
+
+                    modal.classList.add('active');
+                });
+            });
+
+            const closeModal = () => {
+                modal.classList.remove('active');
+            };
+
+            closeModalButton.addEventListener('click', closeModal);
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
